@@ -10,19 +10,27 @@ var tablize = require('sd-datatables');
 module.exports = {
 
   attributes: {
-    assocTrackId: {
-      type: 'string',
-      required: true
-		},
     name: {
       type: 'string',
       required: true
 		},
-    tournyDate: {
+    maxEntries: {
       type: 'integer',
       required: true
 		},
-    max: {
+		variant: {
+			type: 'string',
+			required: true
+		},
+		timeControl: {
+			type: 'string',
+			required: true
+		},
+    registrationOpens: {
+      type: 'integer',
+      required: true
+		},
+    startTime: {
       type: 'integer',
       required: true
 		},
@@ -30,17 +38,21 @@ module.exports = {
       type: 'float',
       required: true
 		},
-    siteFee: {
+    houseFee: {
       type: 'float',
       required: true
 		},
-    credits: {
-      type: 'float',
+    status: {
+      type: 'string',
       required: true
 		},
     closed: {
       type: 'boolean',
       required: true
+		},
+    finalStandings: {
+      type: 'array',
+      required: false
 		}
   }
 

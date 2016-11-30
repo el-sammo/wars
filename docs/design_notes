@@ -1,8 +1,51 @@
 ///
-// Poker
+// Chess Wars
 //
-// August, 2015 - Larry Barrett
-// larry.c.barrett@gmail.com
+// November 30, 2016 - Barrett
+// 
+// 
+// Tournament
+// - id (req, varchar)
+// - name (req, varchar)
+// - maxEntries (req, number)
+// - variant (req, enum)
+// - timeControl (req, varchar)
+// - registrationOpens (req, number)
+// - startTime (req, number)
+// - entryFee (req, float)
+// - houseFee (req, float)
+// - status (req, enum)
+// - closed (req, boolean)
+// - finalStandings (opt, array)
+// 
+// Player
+// - id (req, varchar)
+// - fName (req, varchar)
+// - lName (req, varchar)
+// - uscf (opt, number)
+// - uscfExpiry (opt, number)
+// - uscfRating (opt, number)
+// - fide (opt, number???)
+// - fideExpiry (opt, number)
+// - fideRating (opt, number)
+// - ccomUsername (req, varchar)
+// - password (req, varchar)
+// - balance
+// 
+// TournamentPlayers
+// id (req, varchar)
+// tournamentId (req, varchar)
+// playerId (req, varchar)
+//
+// Transactions
+// id (req, varchar)
+// type (req, enum)
+// amount (req, float)
+// relatedId (opt, varchar) // <-- this could be a tournament id, player id, etc... 
+//
 ///
 
-
+///
+// Player Lookup (US Chess)
+// https://new.uschess.org/players/search/?search=14946043&rating_type=regular&rating_min=0&rating_max=3000
+///
