@@ -26,6 +26,10 @@ module.exports = {
 			type: 'string',
 			required: true
 		},
+    tournyDate: {
+      type: 'integer',
+      required: true
+		},
     registrationOpens: {
       type: 'integer',
       required: true

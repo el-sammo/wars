@@ -12,13 +12,13 @@
 	controller.$inject = [
 		'$scope', '$modalInstance',	'$http',
 		'$rootScope', '$window', 'layoutMgmt',
-		'messenger', 'deviceMgr', 'customerMgmt'
+		'messenger', 'deviceMgr', 'playerMgmt'
 	];
 
 	function controller(
 		$scope, $modalInstance,	$http,
 		$rootScope, $window, layoutMgmt,
-		messenger, deviceMgr, customerMgmt
+		messenger, deviceMgr, playerMgmt
 	) {
 
 		$scope.badCreds = false;
@@ -37,9 +37,9 @@
 				'/login', credentials
 			).success(function(data, status, headers, config) {
 				// if login ajax succeeds...
-				$rootScope.$broadcast('customerLoggedIn', data.customerId);
-				$rootScope.customerId = data.customerId;
-				$scope.customerId = data.customerId;
+				$rootScope.$broadcast('playerLoggedIn', data.playerId);
+				$rootScope.playerId = data.playerId;
+				$scope.playerId = data.playerId;
 				$modalInstance.dismiss('done');
 			}).error(function(err) {
 				console.log('we were NOT successful here - 1');
@@ -58,7 +58,7 @@
 		}
 
 		$scope.logOut = function() {
-			customerMgmt.logout().then(function() {
+			playerMgmt.logout().then(function() {
 				$modalInstance.dismiss('done');
 				$window.location.href = '/';
 			}).catch(function(err) {

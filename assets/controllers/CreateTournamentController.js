@@ -14,17 +14,17 @@
 		'$rootScope', '$scope', '$http', '$modal',
 		'$modalInstance', '$window',
 		'navMgr', 'pod', 'layoutMgmt',
-		'customerMgmt', 'trdMgmt', 'tournamentMgmt'
+		'playerMgmt', 'trdMgmt', 'tournamentMgmt'
 	];
 
 	function controller(
 		$rootScope, $scope, $http, $modal,
 		$modalInstance, $window,
 		navMgr, pod, layoutMgmt,
-		customerMgmt, trdMgmt, tournamentMgmt
+		playerMgmt, trdMgmt, tournamentMgmt
 	) {
 
-		if(!$scope.$parent.customerId) {
+		if(!$scope.$parent.playerId) {
 			layoutMgmt.logIn();
 		}
 
@@ -76,20 +76,20 @@
 		var todayDate = year + month + date;
 		$scope.todayDate = todayDate;
 
-		var getCustomerPromise = customerMgmt.getCustomer($scope.$parent.customerId);
-		getCustomerPromise.then(function(customer) {
-			$scope.customer = customer;
+		var getPlayerPromise = playerMgmt.getPlayer($scope.$parent.playerId);
+		getPlayerPromise.then(function(player) {
+			$scope.player = player;
 			var getTrdsPromise = trdMgmt.getTrdsByDate(todayDate);
 			getTrdsPromise.then(function(trdsData) {
 				$scope.tracks = trdsData;
 				$scope.selTrack = $scope.tracks[0].id;
-				$scope.updateTournamentName(customer, trdsData[0]);
+				$scope.updateTournamentName(player, trdsData[0]);
 			});
 		});
 
-		$scope.updateTournamentName = function(customer, track) {
+		$scope.updateTournamentName = function(player, track) {
 			$scope.useTrack = track;
-			$scope.tournament.name = customer.city + ' ' +customer.fName + '\'s ' + track.name + ' Tournament';
+			$scope.tournament.name = player.city + ' ' +player.fName + '\'s ' + track.name + ' Tournament';
 		}
 
 		$scope.createTournament = function() {
@@ -98,12 +98,12 @@
 			$scope.tournament.entryFee = parseFloat($scope.selEntryFee);
 			$scope.tournament.siteFee = parseFloat(($scope.selEntryFee / 10).toFixed(2));
 			$scope.tournament.startTime = $scope.useTrack.races[0].postTime;
-			$scope.tournament.customers = [$scope.$parent.customerId];
+			$scope.tournament.players = [$scope.$parent.playerId];
 			$scope.tournament.pubPriv = $scope.selPubPriv;
 
 			var dTotal = parseFloat($scope.tournament.entryFee + $scope.tournament.siteFee);
 
-			if($scope.customer.dollars < dTotal) {
+			if($scope.player.dollars < dTotal) {
 				$scope.insufficientFunds = true;
 			} else {
 console.log('not too poor');

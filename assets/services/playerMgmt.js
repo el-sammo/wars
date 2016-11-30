@@ -4,10 +4,10 @@
 	var app = angular.module('app');
 
 	///
-	// Customer Management
+	// Player Management
 	///
 
-	app.factory('customerMgmt', service);
+	app.factory('playerMgmt', service);
 	
 	service.$inject = [
 		'$http', '$q', '$sce', 'configMgr', 'querystring'
@@ -16,13 +16,13 @@
 	function service(
 		$http, $q, $sce, configMgr, querystring
 	) {
-		var customer;
-		var getCustomerPromise;
+		var player;
+		var getPlayerPromise;
 
 		var service = {
-			getCustomer: function(customerId) {
-				var url = '/customers/' + customerId;
-				getCustomerPromise = $http.get(url).then(function(res) {
+			getPlayer: function(playerId) {
+				var url = '/players/' + playerId;
+				getPlayerPromise = $http.get(url).then(function(res) {
 					return res.data;
 				}).catch(function(err) {
 					console.log('GET ' + url + ': ajax failed');
@@ -30,18 +30,18 @@
 					return $q.reject(err);
 				});
 
-				return getCustomerPromise;
+				return getPlayerPromise;
 			},
 
-			createCustomer: function(customerData) {
-				var url = '/customers/create';
-				return $http.post(url, customerData).success(
+			createPlayer: function(playerData) {
+				var url = '/players/create';
+				return $http.post(url, playerData).success(
 					function(data, status, headers, config) {
 						if(status >= 400) {
 							return $q.reject(data);
 						}
-						mergeIntoCustomer(data, true);
-						return customer;
+						mergeIntoPlayer(data, true);
+						return player;
 					}
 				).catch(function(err) {
 					console.log('POST ' + url + ': ajax failed');
@@ -50,15 +50,15 @@
 				});
 			},
 
-			updateCustomer: function(customerData) {
-				var url = '/customers/' + customerData.id;
-				return $http.put(url, customerData).success(
+			updatePlayer: function(playerData) {
+				var url = '/players/' + playerData.id;
+				return $http.put(url, playerData).success(
 					function(data, status, headers, config) {
 						if(status >= 400) {
 							return $q.reject(data);
 						}
-						mergeIntoCustomer(data, true);
-						return customer;
+						mergeIntoPlayer(data, true);
+						return player;
 					}
 				).catch(function(err) {
 					console.log('PUT ' + url + ': ajax failed');
@@ -69,13 +69,13 @@
 
 			// TODO: This probably can be replaced with client-side only code
 			logout: function() {
-				var url = '/customers/logout';
+				var url = '/players/logout';
 				return $http.get(url).success(
 					function(data, status, headers, config) {
 						if(status >= 400) {
 							return $q.reject(data);
 						}
-						mergeIntoCustomer({}, true);
+						mergeIntoPlayer({}, true);
 						// TODO - Clear session also
 					}
 				).catch(function(err) {
@@ -86,7 +86,7 @@
 			},
 
 			getSession: function() {
-				var url = '/customers/session';
+				var url = '/players/session';
 				return $http.get(url).then(function(sessionRes) {
 					if(! (sessionRes && sessionRes.data)) {
 						return $q.reject(sessionRes);
@@ -102,7 +102,7 @@
 
 			setWelcomed: function(sessionData) {
 				sessionData.welcomed = true;
-				var url = '/customers/welcomed/' +sessionData.sid;
+				var url = '/players/welcomed/' +sessionData.sid;
 				return $http.put(url, sessionData).success(
 					function(data, status, headers, config) {
 						if(status >= 400) {
@@ -117,26 +117,26 @@
 				});
 			}
 
-			// TODO - Get customer by username
+			// TODO - Get player by username
 			// :split services/signup.js
 
 		};
 
-		function mergeIntoCustomer(data, replace) {
-			if(! customer) {
-				customer = data;
+		function mergeIntoPlayer(data, replace) {
+			if(! player) {
+				player = data;
 				return;
 			}
 
 			// Delete all original keys
 			if(replace) {
-				angular.forEach(customer, function(val, key) {
-					delete customer[key];
+				angular.forEach(player, function(val, key) {
+					delete player[key];
 				});
 			}
 
 			angular.forEach(data, function(val, key) {
-				customer[key] = val;
+				player[key] = val;
 			});
 		};
 

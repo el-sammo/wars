@@ -7,14 +7,14 @@
 	
 	controller.$inject = [
 		'$q', '$scope', '$modalInstance', '$http', '$rootScope', '$timeout',
-		'$window', 'customerMgmt', 'clientConfig', 'args', 'entityMgmt',
+		'$window', 'playerMgmt', 'clientConfig', 'args', 'entityMgmt',
 		'reservationMgmt', 'signupPrompter', 'layoutMgmt',
 		'payMethodMgmt', 'orderMgmt', 'promoMgmt'
 	];
 
 	function controller(
 		$q, $scope, $modalInstance, $http, $rootScope, $timeout,
-		$window, customerMgmt, clientConfig, args, entityMgmt,
+		$window, playerMgmt, clientConfig, args, entityMgmt,
 		reservationMgmt, signupPrompter, layoutMgmt,
 		payMethodMgmt, orderMgmt, promoMgmt
 	) {
@@ -24,24 +24,24 @@
 		$scope.getMore = false;
 		$scope.validCode = true;
 
-		var getSessionPromise = customerMgmt.getSession();
+		var getSessionPromise = playerMgmt.getSession();
 		getSessionPromise.then(function(sessionData) {
 
-			if(sessionData.customerId) {
-				var getCustomerPromise = customerMgmt.getCustomer(sessionData.customerId);
-				getCustomerPromise.then(function(customer) {
-					var foundCustomer = angular.copy(customer);
-					$scope.customer = foundCustomer;
+			if(sessionData.playerId) {
+				var getPlayerPromise = playerMgmt.getPlayer(sessionData.playerId);
+				getPlayerPromise.then(function(player) {
+					var foundPlayer = angular.copy(player);
+					$scope.player = foundPlayer;
 					if(
-						customer.fName && 
-						customer.lName && 
-						customer.phone &&
-						customer.address &&
-						customer.city &&
-						customer.state &&
-						customer.zip
+						player.fName && 
+						player.lName && 
+						player.phone &&
+						player.address &&
+						player.city &&
+						player.state &&
+						player.zip
 					) {
-						var paymentMethods = foundCustomer.paymentMethods || [];
+						var paymentMethods = foundPlayer.paymentMethods || [];
 				
 						paymentMethods.forEach(function(payMethod) {
 							payMethod.lastFour = redactCC(payMethod.lastFour);
@@ -107,8 +107,8 @@ console.log('$scope.showTerms() called');
 				cvv2: $scope.payMethod.cvv2
 			};
 
-			payMethodMgmt.addPM(paymentData).then(function(customer) {
-				var payMethod = _.last(customer.paymentMethods);
+			payMethodMgmt.addPM(paymentData).then(function(player) {
+				var payMethod = _.last(player.paymentMethods);
 				var pos = $scope.checkoutPaymentMethods.length - 2;
 				$scope.checkoutPaymentMethods.splice(pos, 0, {
 					id: payMethod.id,
@@ -116,9 +116,9 @@ console.log('$scope.showTerms() called');
 				});
 				$scope.selMethod = payMethod.id;
 			}).catch(function(err) {
-				if(err.duplicateCustomerProfile && err.duplicateCustomerProfileId > 0) {
-					$scope.customer.aNetProfileId = err.duplicateCustomerProfileId;
-					customerMgmt.updateCustomer($scope.customer).then($scope.addPM);
+				if(err.duplicatePlayerProfile && err.duplicatePlayerProfileId > 0) {
+					$scope.player.aNetProfileId = err.duplicatePlayerProfileId;
+					playerMgmt.updatePlayer($scope.player).then($scope.addPM);
 				}
 				if(err.duplicatePaymentProfile) {
 					if($($window).width() > bigScreenWidth) {
@@ -146,8 +146,8 @@ console.log('$scope.showTerms() called');
 		$scope.orderCompleted = false;
 
 		$scope.addBasics = function() {
-			var updateCustomerPromise = customerMgmt.updateCustomer($scope.customer);
-			updateCustomerPromise.then(function(response) {
+			var updatePlayerPromise = playerMgmt.updatePlayer($scope.player);
+			updatePlayerPromise.then(function(response) {
 				$modalInstance.dismiss('done');
 				$scope.getMore = false;
 				orderMgmt.reserve(
@@ -200,8 +200,8 @@ console.log('$scope.showTerms() called');
 				eOds: $scope.eOds,
 				eeCount: $scope.eeCount,
 				entityName: $scope.entityName, 
-				customerId: $scope.customer.id,
-				aNetProfileId: $scope.customer.aNetProfileId,
+				playerId: $scope.player.id,
+				aNetProfileId: $scope.player.aNetProfileId,
 				paymentMethodId: $scope.selMethod,
 				cost: parseFloat(cost), 
 				quantity: parseInt($scope.quantity), 

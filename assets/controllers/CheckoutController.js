@@ -10,7 +10,7 @@
 		'$timeout', 'args', 'messenger', 'layoutMgmt',
 		'clientConfig', 'payMethodMgmt', 'delFeeMgmt', '$window',
 		'deviceMgr', 'hoursMgr', 'bigScreenWidth', 'promoMgmt',
-		'orderMgmt', 'customerMgmt'
+		'orderMgmt', 'playerMgmt'
 	];
 
 	function controller(
@@ -18,10 +18,10 @@
 		$timeout, args, messenger, layoutMgmt,
 		clientConfig, payMethodMgmt, delFeeMgmt, $window,
 		deviceMgr, hoursMgr, bigScreenWidth, promoMgmt,
-		orderMgmt, customerMgmt
+		orderMgmt, playerMgmt
 	) {
 
-	//	if(!$scope.order || !$scope.order.customerId) {
+	//	if(!$scope.order || !$scope.order.playerId) {
 	//		$modalInstance.dismiss('cancel');
 	//	}
 
@@ -86,8 +86,8 @@
 				cvv2: $scope.payMethod.cvv2
 			};
 
-			payMethodMgmt.addPM(paymentData).then(function(customer) {
-				var payMethod = _.last(customer.paymentMethods);
+			payMethodMgmt.addPM(paymentData).then(function(player) {
+				var payMethod = _.last(player.paymentMethods);
 				var pos = $scope.checkoutPaymentMethods.length - 2;
 				$scope.checkoutPaymentMethods.splice(pos, 0, {
 					id: payMethod.id,
@@ -95,9 +95,9 @@
 				});
 				$scope.selMethod = payMethod.id;
 			}).catch(function(err) {
-				if(err.duplicateCustomerProfile && err.duplicateCustomerProfileId > 0) {
-					$scope.customer.aNetProfileId = err.duplicateCustomerProfileId;
-					customerMgmt.updateCustomer($scope.customer).then($scope.addPM);
+				if(err.duplicatePlayerProfile && err.duplicatePlayerProfileId > 0) {
+					$scope.player.aNetProfileId = err.duplicatePlayerProfileId;
+					playerMgmt.updatePlayer($scope.player).then($scope.addPM);
 				}
 				if(err.duplicatePaymentProfile) {
 					if($($window).width() > bigScreenWidth) {
@@ -111,9 +111,9 @@
 			});
 		};
 
-		customerMgmt.getCustomer($scope.order.customerId).then(function(customer) {
-			var foundCustomer = angular.copy(customer);
-			var paymentMethods = foundCustomer.paymentMethods || [];
+		playerMgmt.getPlayer($scope.order.playerId).then(function(player) {
+			var foundPlayer = angular.copy(player);
+			var paymentMethods = foundPlayer.paymentMethods || [];
 
 			paymentMethods.forEach(function(payMethod) {
 				payMethod.lastFour = redactCC(payMethod.lastFour);
@@ -124,11 +124,11 @@
 
 			$scope.checkoutPaymentMethods = paymentMethods;
 
-			$scope.customer = foundCustomer;
+			$scope.player = foundPlayer;
 			$scope.sawBevTour = $scope.order.sawBevTour;
 
 			var bevs = [];
-			$http.get('/bevs/byAreaId/' + foundCustomer.areaId).then(function(res) {
+			$http.get('/bevs/byAreaId/' + foundPlayer.areaId).then(function(res) {
 				res.data.forEach(function(res) {
 					var thisBev = res;
 
@@ -147,7 +147,7 @@
 			});
 
 		}).catch(function(err) {
-			console.log('CheckoutController: getCustomer ajax failed');
+			console.log('CheckoutController: getPlayer ajax failed');
 			console.error(err);
 			$modalInstance.dismiss('cancel');
 		});
@@ -167,7 +167,7 @@
 
 			if($scope.promo) {
 				var promoCode = $scope.promo;
-				promoMgmt.getPromo(currentDelFee, promoCode, $scope.customer.id).then(function(feeDataObj) {
+				promoMgmt.getPromo(currentDelFee, promoCode, $scope.player.id).then(function(feeDataObj) {
 					var feeData = feeDataObj.data;
 					if(feeData.success) {
 						$scope.validCode = true;
@@ -253,9 +253,9 @@
 						}
 						$rootScope.$broadcast('orderChanged');
 						// notify operator
-						$http.post('/mail/sendNotifyToOperator/'+$scope.order.customerId);
-						// notify customer
-						$http.post('/mail/sendOrderToCustomer/'+$scope.order.customerId);
+						$http.post('/mail/sendNotifyToOperator/'+$scope.order.playerId);
+						// notify player
+						$http.post('/mail/sendOrderToPlayer/'+$scope.order.playerId);
 						$modalInstance.dismiss('done');
 						if(deviceMgr.isBigScreen()) {
 							$window.location.href = '/app/order/' + $scope.order.id;
@@ -294,9 +294,9 @@
 						}
 						$rootScope.$broadcast('orderChanged');
 						// notify operator
-						$http.post('/mail/sendNotifyToOperator/'+$scope.order.customerId);
-						// notify customer
-						$http.post('/mail/sendOrderToCustomer/'+$scope.order.customerId);
+						$http.post('/mail/sendNotifyToOperator/'+$scope.order.playerId);
+						// notify player
+						$http.post('/mail/sendOrderToPlayer/'+$scope.order.playerId);
 						$modalInstance.dismiss('done');
 
 						var redirectTo = '/orderSmall/' + $scope.order.id;

@@ -7,26 +7,26 @@
 	
 	controller.$inject = [
 		'$window', '$rootScope', '$scope', '$modalInstance', 'args', 'messenger',
-		'payMethodMgmt', 'customerMgmt', 'clientConfig'
+		'payMethodMgmt', 'playerMgmt', 'clientConfig'
 	];
 
 	function controller(
 		$window, $rootScope, $scope, $modalInstance, args, messenger,
-		payMethodMgmt, customerMgmt, clientConfig
+		payMethodMgmt, playerMgmt, clientConfig
 	) {
 
 		if(args.pmId) {
 			var pmId = args.pmId;
 		}
 
-		if(args.customerId) {
-			var customerId = args.customerId;
+		if(args.playerId) {
+			var playerId = args.playerId;
 
-			customerMgmt.getCustomer(customerId).then(function(customer) {
-				$scope.customer = customer;
-				$scope.address = customer.addresses.primary.streetNumber+' '+customer.addresses.primary.streetName;
-				$scope.city = customer.addresses.primary.city;
-				$scope.zip = parseInt(customer.addresses.primary.zip);
+			playerMgmt.getPlayer(playerId).then(function(player) {
+				$scope.player = player;
+				$scope.address = player.addresses.primary.streetNumber+' '+player.addresses.primary.streetName;
+				$scope.city = player.addresses.primary.city;
+				$scope.zip = parseInt(player.addresses.primary.zip);
 			});
 		}
 
@@ -41,12 +41,12 @@
 				cvv2: $scope.payMethod.cvv2
 			};
 
-			payMethodMgmt.addPM(paymentData).then(function(customer){
+			payMethodMgmt.addPM(paymentData).then(function(player){
 				$scope.processing = false;
 				messenger.show('The payment method has been added.', 'Success!');
 				$modalInstance.dismiss('done');
 
-				$rootScope.$broadcast('customerChanged', customer);
+				$rootScope.$broadcast('playerChanged', player);
 			}).catch(function(err) {
 				$modalInstance.dismiss('cancel');
 			});
@@ -84,9 +84,9 @@
 				state: $scope.state,
 				zip: $scope.zip
 			}
-			$scope.customer.addresses.primary = addressObject;
+			$scope.player.addresses.primary = addressObject;
 
-			customerMgmt.updateCustomer($scope.customer).then(function(res) {
+			playerMgmt.updatePlayer($scope.player).then(function(res) {
 			$modalInstance.dismiss('done');
 			messenger.show('The address has been updated.', 'Success!');
 			});

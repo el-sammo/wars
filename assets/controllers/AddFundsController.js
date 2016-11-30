@@ -14,17 +14,17 @@
 		'$rootScope', '$scope', '$http', '$modal',
 		'$modalInstance', '$window',
 		'navMgr', 'pod', 'layoutMgmt',
-		'customerMgmt', 'trdMgmt', 'tournamentMgmt'
+		'playerMgmt', 'trdMgmt', 'tournamentMgmt'
 	];
 
 	function controller(
 		$rootScope, $scope, $http, $modal,
 		$modalInstance, $window,
 		navMgr, pod, layoutMgmt,
-		customerMgmt, trdMgmt, tournamentMgmt
+		playerMgmt, trdMgmt, tournamentMgmt
 	) {
 
-		if(!$scope.$parent.customerId) {
+		if(!$scope.$parent.playerId) {
 			layoutMgmt.logIn();
 		}
 
@@ -47,9 +47,9 @@
 		var todayDate = year + month + date;
 		$scope.todayDate = todayDate;
 
-		var getCustomerPromise = customerMgmt.getCustomer($scope.$parent.customerId);
-		getCustomerPromise.then(function(customer) {
-			$scope.customer = customer;
+		var getPlayerPromise = playerMgmt.getPlayer($scope.$parent.playerId);
+		getPlayerPromise.then(function(player) {
+			$scope.player = player;
 		});
 
 		$scope.addFunds = function() {

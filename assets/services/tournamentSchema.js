@@ -22,14 +22,18 @@
 		var service = {
 			defaults: {
 				tournament: {
-					assocTournyId: '',
 					name: '',
+					maxEntries: '',
+					variant: '',
+					timeControl: '',
 					tournyDate: '',
-					max: '',
+					registrationOpens: '',
+					startTime: '',
 					entryFee: '',
-					siteFee: '',
+					houseFee: '',
+					status: '',
 					closed: '',
-					customers: []
+					finalStandings: []
 				}
 			},
 

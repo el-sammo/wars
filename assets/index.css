@@ -105,6 +105,18 @@ input.error {
   position: relative;
 }  
 
+.beccaTab {
+	margin: 4px;
+	border: 1px solid black;
+	border-radius: 15px;
+	font-size: 24px;
+	color: white;
+	font-weight: 900;
+	text-align: center;
+	background-color: #1670BC;
+	cursor: pointer;
+}
+
 .noAccount {
 	font-size: 14px;
 	font-weight: 500;

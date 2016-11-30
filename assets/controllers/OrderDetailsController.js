@@ -23,13 +23,13 @@
 	controller.$inject = [
 		'$window', '$scope', '$http', '$routeParams', '$modal', '$timeout',
 		'$rootScope', '$q', '$sce', 'orderMgmt', 'signupPrompter',
-		'querystring', 'configMgr', 'customerMgmt'
+		'querystring', 'configMgr', 'playerMgmt'
 	];
 
 	function controller(
 		$window, $scope, $http, $routeParams, $modal, $timeout,
 		$rootScope, $q, $sce, orderMgmt, signupPrompter,
-		querystring, configMgr, customerMgmt
+		querystring, configMgr, playerMgmt
 	) {
 
 		function refreshData() {
@@ -38,11 +38,11 @@
 			if(!location.pathname.match('order')) {
 				return;
 			}
-			var sessionPromise = customerMgmt.getSession();
+			var sessionPromise = playerMgmt.getSession();
 
 			sessionPromise.then(function(sessionData) {
 				/*
-				if(!sessionData.customerId) {
+				if(!sessionData.playerId) {
 					$window.location.href = '/';
 					return;
 				}
@@ -60,7 +60,7 @@
 				r.then(function(res) {
 					$scope.order = res.data;
 
-					if(!$scope.order.customerId == sessionData.customerId) {
+					if(!$scope.order.playerId == sessionData.playerId) {
 						$window.location.href = '/';
 						return;
 					}
@@ -113,22 +113,22 @@
 						});
 					}
 
-					customerMgmt.getCustomer($scope.order.customerId).then(function(customer) {
-						$scope.customer = customer;
-						$scope.fName = $scope.customer.fName;
-						$scope.lName = $scope.customer.lName;
-						$scope.phone = $scope.customer.phone;
-						$scope.address = $scope.customer.addresses.primary.streetNumber+' '+$scope.customer.addresses.primary.streetName+' '+$scope.customer.addresses.primary.city;
+					playerMgmt.getPlayer($scope.order.playerId).then(function(player) {
+						$scope.player = player;
+						$scope.fName = $scope.player.fName;
+						$scope.lName = $scope.player.lName;
+						$scope.phone = $scope.player.phone;
+						$scope.address = $scope.player.addresses.primary.streetNumber+' '+$scope.player.addresses.primary.streetName+' '+$scope.player.addresses.primary.city;
 
 						$scope.src = $sce.trustAsResourceUrl(
 							'https://www.google.com/maps/embed/v1/place?' + querystring.stringify({
 								key: configMgr.config.vendors.googleMaps.key,
 								q: ([
-									$scope.customer.addresses.primary.streetNumber,
-									$scope.customer.addresses.primary.streetName,
-									$scope.customer.addresses.primary.city,
-									$scope.customer.addresses.primary.state,
-									$scope.customer.addresses.primary.zip
+									$scope.player.addresses.primary.streetNumber,
+									$scope.player.addresses.primary.streetName,
+									$scope.player.addresses.primary.city,
+									$scope.player.addresses.primary.state,
+									$scope.player.addresses.primary.zip
 								].join('+'))
 							})
 						);

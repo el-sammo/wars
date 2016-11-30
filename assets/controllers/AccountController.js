@@ -11,13 +11,13 @@
 	
 	controller.$inject = [
 		'$scope', '$http', '$rootScope', '$window',
-		'messenger', 'payMethodMgmt', 'layoutMgmt', 'customerMgmt',
+		'messenger', 'payMethodMgmt', 'layoutMgmt', 'playerMgmt',
 		'accountMgmt', 'deviceMgr', 'tournamentMgmt'
 	];
 
 	function controller(
 		$scope, $http, $rootScope, $window, 
-		messenger, payMethodMgmt, layoutMgmt, customerMgmt,
+		messenger, payMethodMgmt, layoutMgmt, playerMgmt,
 		accountMgmt, deviceMgr, tournamentMgmt
 	) {
 
@@ -43,9 +43,9 @@
 			$window.location.href = location.origin + "/app/tournament/" + tournament.id;
 		}
 
-		var sessionPromise = customerMgmt.getSession();
+		var sessionPromise = playerMgmt.getSession();
 		sessionPromise.then(function(sessionData) {
-			if(!sessionData.customerId) {
+			if(!sessionData.playerId) {
 				$window.location.href = '/';
 				return;
 			}
@@ -75,13 +75,13 @@
 				$scope.currentTournaments = tournamentsData;
 			});
 
-			var customerId = sessionData.customerId;
+			var playerId = sessionData.playerId;
 
 			$scope.testCharge = function(paymentMethodId) {
 console.log('$scope.testCharge() called with PMID: '+paymentMethodId);				
 				var testData = {
 					total: .02,
-					customerId: customerId,
+					playerId: playerId,
 					paymentMethodId: paymentMethodId
 				}
 console.log('testData:');				
@@ -94,18 +94,18 @@ console.log(response);
 				});
 			}
 
-			customerMgmt.getCustomer(customerId).then(function(customer) {
-				$scope.customer = customer;
+			playerMgmt.getPlayer(playerId).then(function(player) {
+				$scope.player = player;
 
-				var getTournamentResultsByCustomerIdPromise = tournamentMgmt.getTournamentResultsByCustomerId(customer.id);
-				getTournamentResultsByCustomerIdPromise.then(function(resultsData) {
+				var getTournamentResultsByPlayerIdPromise = tournamentMgmt.getTournamentResultsByPlayerId(player.id);
+				getTournamentResultsByPlayerIdPromise.then(function(resultsData) {
 					$scope.results = resultsData;
 				});
 			});
 		});
 
-		$rootScope.$on('customerChanged', function(evt, customer) {
-			$scope.customer = customer;
+		$rootScope.$on('playerChanged', function(evt, player) {
+			$scope.player = player;
 		});
 	}
 }());

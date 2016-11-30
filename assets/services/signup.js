@@ -10,11 +10,11 @@
 	app.factory('signupPrompter', service);
 	
 	service.$inject = [
-		'$rootScope', 'customerMgmt', 'layoutMgmt'
+		'$rootScope', 'playerMgmt', 'layoutMgmt'
 	];
 	
 	function service(
-		$rootScope, customerMgmt, layoutMgmt
+		$rootScope, playerMgmt, layoutMgmt
 	) {
 		var hasPrompted = false;
 		var service = {
@@ -22,9 +22,9 @@
 				if(hasPrompted) return;
 				hasPrompted = true;
 
-				customerMgmt.getSession().then(function(sessionData) {
-					if(sessionData.customerId) {
-						$rootScope.$broadcast('customerLoggedIn');
+				playerMgmt.getSession().then(function(sessionData) {
+					if(sessionData.playerId) {
+						$rootScope.$broadcast('playerLoggedIn');
 						return;
 					}
 					layoutMgmt.signUp();
@@ -32,8 +32,8 @@
 			},
 
 			welcome: function() {
-				customerMgmt.getSession().then(function(sessionData) {
-					customerMgmt.setWelcomed(sessionData).then(function(welcomeData) {
+				playerMgmt.getSession().then(function(sessionData) {
+					playerMgmt.setWelcomed(sessionData).then(function(welcomeData) {
 						layoutMgmt.welcome();
 					});
 				});
@@ -52,13 +52,13 @@
 	controller.$inject = [
 		'$scope', '$modalInstance', '$http',
 		'$rootScope', '$window', 'clientConfig',
-		'layoutMgmt', 'customerMgmt'
+		'layoutMgmt', 'playerMgmt'
 	];
 
 	function controller(
 		$scope, $modalInstance, $http,
 		$rootScope, $window, clientConfig,
-		layoutMgmt, customerMgmt
+		layoutMgmt, playerMgmt
 	) {
 
 		$scope.haveAccount = function() {
@@ -72,7 +72,7 @@
 		$scope.emailSearch = function() {
 			if($scope.email === '') return;
 
-			$http.get('/customers/byEmail/' + $scope.email).then(function(res) {
+			$http.get('/players/byEmail/' + $scope.email).then(function(res) {
 				$scope.validEmail = ! (res.data.length > 0);
 			}).catch(function(err) {
 				console.log('layoutMgmt: emailSearch ajax failed');
@@ -83,7 +83,7 @@
 		$scope.usernameSearch = function() {
 			if($scope.username === '') return;
 
-			$http.get('/customers/byUsername/' + $scope.username).then(function(res) {
+			$http.get('/players/byUsername/' + $scope.username).then(function(res) {
 				$scope.validUsername = ! (res.data.length > 0);
 			}).catch(function(err) {
 				console.log('layoutMgmt: usernameSearch ajax failed');
@@ -92,7 +92,7 @@
 		};
 
 		$scope.createAccount = function() {
-			var customer = {
+			var player = {
 				fName: $scope.fName,
 				lName: $scope.lName,
 				city: $scope.city,
@@ -101,22 +101,22 @@
 				password: $scope.password
 			}
 
-			customerMgmt.createCustomer(customer).then(function(customerData) {
-				var customerData = customerData.data;
+			playerMgmt.createPlayer(player).then(function(playerData) {
+				var playerData = playerData.data;
 				$modalInstance.dismiss('done');
 				$scope.submit({
-					username: customer.username,
-					password: customer.password,
-					customerId: customerData.id
+					username: player.username,
+					password: player.password,
+					playerId: playerData.id
 				});
-console.log('preparing to send email to customer with id: '+customerData.id);				
-				$http.get('/mail/sendConfirmationToCustomer/' + customerData.id).then(function(mailResponse) {
+console.log('preparing to send email to player with id: '+playerData.id);				
+				$http.get('/mail/sendConfirmationToPlayer/' + playerData.id).then(function(mailResponse) {
 console.log('mailResponse:');
 console.log(mailResponse);
 				});
 			}).catch(function(err) {
-				// if customers ajax fails...
-				console.log('LayoutMgmtController: customer-create ajax failed');
+				// if players ajax fails...
+				console.log('LayoutMgmtController: player-create ajax failed');
 				console.error(err);
 				$modalInstance.dismiss('cancel');
 			});
@@ -128,13 +128,13 @@ console.log(mailResponse);
 			).success(function(data, status, headers, config) {
 				// if login ajax succeeds...
 				if(status >= 400) {
-					$rootScope.$broadcast('customerLoggedIn', data.customerId);
+					$rootScope.$broadcast('playerLoggedIn', data.playerId);
 					$modalInstance.dismiss('done');
 				} else if(status == 200) {
-					$rootScope.$broadcast('customerLoggedIn', data.customerId);
+					$rootScope.$broadcast('playerLoggedIn', data.playerId);
 					$modalInstance.dismiss('done');
 				} else {
-					$rootScope.$broadcast('customerLoggedIn', data.customerId);
+					$rootScope.$broadcast('playerLoggedIn', data.playerId);
 					$modalInstance.dismiss('done');
 				}
 			}).error(function(err) {

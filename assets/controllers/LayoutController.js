@@ -13,14 +13,14 @@
 	controller.$inject = [
 		'navMgr', 'pod', '$scope', '$window',
 		'$http', '$routeParams', '$modal', 'layoutMgmt',
-		'$rootScope', 'customerMgmt',
+		'$rootScope', 'playerMgmt',
 		'signupPrompter', 'deviceMgr'
 	];
 
 	function controller(
 		navMgr, pod, $scope, $window,
 		$http, $routeParams, $modal, layoutMgmt,
-		$rootScope, customerMgmt,
+		$rootScope, playerMgmt,
 		signupPrompter, deviceMgr
 	) {
 
@@ -88,12 +88,12 @@
 
 		$scope.bgImg = randImg;
 
-		var sessionPromise = customerMgmt.getSession();
+		var sessionPromise = playerMgmt.getSession();
 		sessionPromise.then(function(sessionData) {
-			if(sessionData.customerId) {
+			if(sessionData.playerId) {
 				$scope.showLogout = true;
 				$scope.accessAccount = true;
-				$scope.customerId = sessionData.customerId;
+				$scope.playerId = sessionData.playerId;
 			}
 
 			$scope.showAccount = function() {
@@ -111,10 +111,10 @@
 			return string.charAt(0).toUpperCase() + string.slice(1);
 		}
 
-		$rootScope.$on('customerLoggedIn', function(evt, args) {
+		$rootScope.$on('playerLoggedIn', function(evt, args) {
 			$scope.showLogout = true;
 			$scope.accessAccount = true;
-			$scope.customerId = args;
+			$scope.playerId = args;
 			$rootScope.$broadcast('orderChanged');
 		});
 	}

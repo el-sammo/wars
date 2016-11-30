@@ -19,20 +19,17 @@
 		var tournament;
 		var registerTournamentPromise;
 		var unRegisterTournamentPromise;
-		var getTournamentResultsByCustomerIdPromise;
-		var getTournamentsByCustomerIdPromise;
+		var getTournamentResultsByPlayerIdPromise;
+		var getTournamentsByPlayerIdPromise;
 		var getTournamentsByDatePromise;
-		var getLeadersPromise;
-		var getCustomerTournamentCreditsPromise;
-		var updateTournamentCustomersCreditsPromise;
-		var updateTSCreditsPromise;
 		var closeTournamentPromise;
 		var unCloseTournamentPromise;
-		var scoreTournamentPromise;
 
 		var service = {
 			getTournament: function(tournamentId) {
 				var url = '/tournaments/' + tournamentId;
+				// http://45.58.37.37:2477/tournaments/583e848b1cdb18bf17b4ff37
+				// https://www.replaypoker.com/lobby/mtts/998828
 				return $http.get(url).then(function(res) {
 					return res.data;
 				}).catch(function(err) {
@@ -70,10 +67,10 @@
 				return unRegisterTournamentPromise;
 			},
 
-			getTournamentsByCustomerId: function(customerId) {
-console.log('getTournamentsByCustomerId() called');
-				var url = '/tournaments/byCustomerId/' + customerId;
-				getTournamentsByCustomerIdPromise = $http.get(url).then(function(res) {
+			getTournamentsByPlayerId: function(customerId) {
+console.log('getTournamentsByPlayerId() called');
+				var url = '/tournaments/byPlayerId/' + customerId;
+				getTournamentsByPlayerIdPromise = $http.get(url).then(function(res) {
 					return res.data;
 				}).catch(function(err) {
 					console.log('GET ' + url + ': ajax failed');
@@ -81,13 +78,13 @@ console.log('getTournamentsByCustomerId() called');
 					return $q.reject(err);
 				});
 
-				return getTournamentsByCustomerIdPromise;
+				return getTournamentsByPlayerIdPromise;
 			},
 
-			getTournamentResultsByCustomerId: function(customerId) {
-console.log('getTournamentResultsByCustomerId() called');
-				var url = '/tournaments/resultsByCustomerId/' + customerId;
-				getTournamentResultsByCustomerIdPromise = $http.get(url).then(function(res) {
+			getTournamentResultsByPlayerId: function(customerId) {
+console.log('getTournamentResultsByPlayerId() called');
+				var url = '/tournaments/resultsByPlayerId/' + customerId;
+				getTournamentResultsByPlayerIdPromise = $http.get(url).then(function(res) {
 					return res.data;
 				}).catch(function(err) {
 					console.log('GET ' + url + ': ajax failed');
@@ -95,7 +92,7 @@ console.log('getTournamentResultsByCustomerId() called');
 					return $q.reject(err);
 				});
 
-				return getTournamentResultsByCustomerIdPromise;
+				return getTournamentResultsByPlayerIdPromise;
 			},
 
 			getTournamentsByDate: function(date) {
@@ -125,9 +122,9 @@ console.log('getLeaders() called');
 				return getLeadersPromise;
 			},
 
-			getCustomerTournamentCredits: function(tournyCustomerId) {
-				var url = '/tournamentstandings/customerTournamentCredits/' + tournyCustomerId;
-				getCustomerTournamentCreditsPromise = $http.get(url).then(function(res) {
+			getPlayerTournamentCredits: function(tournyPlayerId) {
+				var url = '/tournamentstandings/customerTournamentCredits/' + tournyPlayerId;
+				getPlayerTournamentCreditsPromise = $http.get(url).then(function(res) {
 					return res.data;
 				}).catch(function(err) {
 					console.log('GET ' + url + ': ajax failed');
@@ -135,11 +132,11 @@ console.log('getLeaders() called');
 					return $q.reject(err);
 				});
 
-				return getCustomerTournamentCreditsPromise;
+				return getPlayerTournamentCreditsPromise;
 			},
 
-			updateTournamentCustomersCredits: function(finalRaceId, acIds) {
-console.log('updateTournamentCustomersCredits() called');
+			updateTournamentPlayersCredits: function(finalRaceId, acIds) {
+console.log('updateTournamentPlayersCredits() called');
 				var url = '/tournaments/updateTCC/' + finalRaceId;
 				return $http.put(url, acIds).success(
 					function(data, status, headers, config) {

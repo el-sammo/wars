@@ -7,30 +7,30 @@
 	
 	controller.$inject = [
 		'$scope', '$http', '$routeParams', '$rootScope', 'navMgr', 'messenger', 
-		'pod', 'customerSchema', 'customerMgmt'
+		'pod', 'playerSchema', 'playerMgmt'
 	];
 
 	function controller(
 		$scope, $http, $routeParams, $rootScope, navMgr, messenger, 
-		pod, customerSchema, customerMgmt
+		pod, playerSchema, playerMgmt
 	) {
 		navMgr.protect(function() { return $scope.form.$dirty; });
 		pod.podize($scope);
 
-		$scope.customerSchema = customerSchema;
+		$scope.playerSchema = playerSchema;
 		$scope.editMode = true;
 
-		customerMgmt.getCustomer($routeParams.id).then(function(customer) {
-			$scope.customer = customerSchema.populateDefaults(customer);
+		playerMgmt.getPlayer($routeParams.id).then(function(player) {
+			$scope.player = playerSchema.populateDefaults(player);
 		});
 
-		$scope.save = function save(customer, options) {
+		$scope.save = function save(player, options) {
 			options || (options = {});
 
 			// TODO
 			// clean phone; integers only
 
-			customerMgmt.updateCustomer(customer).then(function() {
+			playerMgmt.updatePlayer(player).then(function() {
 				messenger.show('Your account has been updated.', 'Success!');
 				$scope.form.$setPristine();
 			});

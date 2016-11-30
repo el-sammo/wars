@@ -14,7 +14,7 @@ controller.$inject = [
 	'$modal', '$timeout', '$window',
 
 	'signupPrompter', 'deviceMgr', 'layoutMgmt',
-	'customerMgmt', 'trdMgmt', 'wagerMgmt', 'tournamentMgmt',
+	'playerMgmt', 'tournamentMgmt', 'tournamentPlayersMgmt', 
 	'messenger', 
 	'lodash',
 	// in angular, there are some angular-defined variables/functions/behaviors
@@ -25,7 +25,7 @@ function controller(
 	$scope, $http, $routeParams, $rootScope, $location,
 	$modal, $timeout, $window,
 	signupPrompter, deviceMgr, layoutMgmt, 
-	customerMgmt, trdMgmt, wagerMgmt, tournamentMgmt,
+	playerMgmt, tournamentMgmt, tournamentPlayersMgmt,
 	messenger, 
 	_
 ) {
@@ -34,36 +34,6 @@ function controller(
 	///
 
 	var todayDate;
-	var legMap, partMap, amountMap, wagerAbbrevMap;
-
-	// create an array with 52 cards
-	var createDeck = function() {
-		var deck = [];
-		for(var i = 1; i < 53; i++) {
-			deck.push(i);
-		}
-		return deck;
-	}
-
-	// shuffle the deck
-	var shuffleDeck = function(deck) {
-		deck.sort(function(a, b) {
-			return 0.5 - Math.random()
-		});
-		return deck;
-	}
-
-	// return an object containing the dealt card and the rest of the deck
-	var dealCard = function(deck) {
-		var card = deck.splice(0,1);
-		return {deck: deck, card: card};
-	}
-
-	var newDeck = createDeck();
-	var shuffledDeck = shuffleDeck(newDeck);
-	var dealResult = dealCard(shuffledDeck);
-	var dealtCard = dealResult.card;
-	var remainingDeck = dealResult.deck;
 
 	///
 	// Run initialization
@@ -77,37 +47,26 @@ function controller(
 	///
 
 	function init() {
-//		initDate();
-//		initTournaments();
-//
-//		$scope.logIn = layoutMgmt.logIn;
-//		$scope.signUp = layoutMgmt.signUp;
-//		$scope.logOut = layoutMgmt.logOut;
-//
-//		$scope.account = account;
-//		$scope.showTournamentDetails = showTournamentDetails;
-//		$scope.showTournamentLeaders = showTournamentLeaders;
-//		$scope.tournamentRegister = tournamentRegister;
-//		$scope.setActiveTournament = setActiveTournament;
+		initDate();
+		initTournaments();
 
+		$scope.logIn = layoutMgmt.logIn;
+		$scope.signUp = layoutMgmt.signUp;
+		$scope.logOut = layoutMgmt.logOut;
 
-		// write code to represent a deck of cards with operations to shuffle the deck and to deal one card
-		
-		var createDeck = function(){
-		  var deck = [];
-		  	for(var i = 1;i < 53; i++){
-				deck.push(i);
-			}
-			console.log(deck);
-		};
-
-		createDeck();
+		$scope.account = account;
+		$scope.showHeadsUp = showHeadsUp;
+		$scope.showTournaments = showTournaments;
+		$scope.showTournamentDetails = showTournamentDetails;
+		$scope.showTournamentLeaders = showTournamentLeaders;
+		$scope.tournamentRegister = tournamentRegister;
+		$scope.setActiveTournament = setActiveTournament;
 
 
 		// For debugging
 		$scope.debugLog = debugLog;
 
-		$rootScope.$on('customerLoggedIn', onCustomerLoggedIn);
+		$rootScope.$on('playerLoggedIn', onPlayerLoggedIn);
 	}
 
 	function initDate() {
@@ -127,7 +86,7 @@ function controller(
 		todayDate = year + month + date;
 
 		// debug code
-		todayDate = 20160727;
+		// todayDate = 20160727;
 	}
 
 	function initTournaments() {
@@ -140,19 +99,21 @@ function controller(
 	// Event handlers
 	///
 	
-	function onCustomerLoggedIn(evt, args) {
-		$scope.customerId = args;
+	function onPlayerLoggedIn(evt, args) {
+		$scope.playerId = args;
 		$scope.showLogin = false;
 		$scope.showLogout = true;
 		$scope.showSignup = false;
 
-		var getCustomerPromise = customerMgmt.getCustomer($scope.customerId);
-		getCustomerPromise.then(function(customer) {
-			$scope.customer = customer;
+		var getPlayerPromise = playerMgmt.getPlayer($scope.playerId);
+		getPlayerPromise.then(function(player) {
+			$scope.player = player;
 		});
 	}
 
 	function onGetTournaments(currentTournamentsData) {
+console.log('currentTournamentsData:');
+console.log(currentTournamentsData);
 		var dateObj = new Date();
 		var nowMills = dateObj.getTime();
 		currentTournamentsData.forEach(function(tournament) {
@@ -161,18 +122,18 @@ function controller(
 		$scope.currentTournaments = currentTournamentsData;
 console.log($scope.currentTournaments);
 
-		customerMgmt.getSession().then(function(sessionData) {
+		playerMgmt.getSession().then(function(sessionData) {
 
-			if(sessionData.customerId) {
-				$rootScope.customerId = sessionData.customerId;
-				$scope.customerId = $rootScope.customerId;
+			if(sessionData.playerId) {
+				$rootScope.playerId = sessionData.playerId;
+				$scope.playerId = $rootScope.playerId;
 				$scope.showLogin = false;
 				$scope.showSignup = false;
 				$scope.showLogout = true;
 
-				var getCustomerPromise = customerMgmt.getCustomer($scope.customerId);
-				getCustomerPromise.then(function(customer) {
-					$scope.customer = customer;
+				var getPlayerPromise = playerMgmt.getPlayer($scope.playerId);
+				getPlayerPromise.then(function(player) {
+					$scope.player = player;
 				});
 
 			} else {
@@ -187,24 +148,13 @@ console.log($scope.currentTournaments);
 				tournamentData.id = tournament.id;
 				tournamentData.name = tournament.name;
 				tournamentData.entryFee = tournament.entryFee;
-				tournamentData.siteFee = tournament.siteFee;
-				tournamentData.customersCount = tournament.customers.length;
-				tournamentData.max = tournament.max;
-				if(tournament.closed) {
-					if(tournament.scored) {
-						tournamentData.tournamentStatus = 'Finished';
-					} else {
-						tournamentData.tournamentStatus = 'In Progress';
-					}
-				} else {
-					if(tournament.customers.length == tournament.max) {
-						tournamentData.tournamentStatus = 'Full';
-					} else {
-						tournamentData.tournamentStatus = 'Registering';
-					}
-				}
+				tournamentData.houseFee = tournament.houseFee;
+				tournamentData.playersCount = tournamentPlayersMgmt.getTournamentPlayers(tournament.id).length;
+				tournamentData.maxEntries = tournament.maxEntries;
+				tournamentData.tournamentStatus = tournament.status;
 				tournaments.push(tournamentData);
 			});
+			console.log(tournaments);
 			$scope.tournamentsData = tournaments;
 		});
 	}
@@ -214,12 +164,12 @@ console.log($scope.currentTournaments);
 	///
 	
 	function updateBalance() {
-		var getSessionPromise = customerMgmt.getSession();
+		var getSessionPromise = playerMgmt.getSession();
 		getSessionPromise.then(function(sessionData) {
-			if(sessionData.customerId) {
-				var getCustomerPromise = customerMgmt.getCustomer(sessionData.customerId);
-				getCustomerPromise.then(function(customer) {
-					$scope.customer = customer;
+			if(sessionData.playerId) {
+				var getPlayerPromise = playerMgmt.getPlayer(sessionData.playerId);
+				getPlayerPromise.then(function(player) {
+					$scope.player = player;
 				});
 			}
 		});
@@ -232,7 +182,7 @@ console.log($scope.currentTournaments);
 
 
 	function account() {
-		if(!$scope.customerId) {
+		if(!$scope.playerId) {
 			layoutMgmt.logIn();
 		} else {
 			$location.path('/account');
@@ -255,6 +205,16 @@ console.log('offsetMinutes: '+offsetMinutes);
 		}
 	}
 
+	function showHeadsUp() {
+		$scope.tournamentsShow = false;
+		$scope.headsUpShow = true;
+	}
+
+	function showTournaments() {
+		$scope.headsUpShow = false;
+		$scope.tournamentsShow = true;
+	}
+
 	function showTournamentLeaders(tournyId) {
 		$scope.showLeaders = true;
 		var getLeadersPromise = tournamentMgmt.getLeaders(tournyId);
@@ -263,14 +223,14 @@ console.log('offsetMinutes: '+offsetMinutes);
 			leadersData.pop();
 			var leaderBoardData = [];
 			leadersData.forEach(function(leader) {
-				var getCustomerPromise = customerMgmt.getCustomer(leader.customerId);
-				getCustomerPromise.then(function(customerData) {
+				var getPlayerPromise = playerMgmt.getPlayer(leader.playerId);
+				getPlayerPromise.then(function(playerData) {
 					var thisLeader = {};
-					thisLeader.id = leader.customerId;
-					thisLeader.fName = customerData.fName;
-					thisLeader.lName = customerData.lName;
-					thisLeader.city = customerData.city;
-					thisLeader.username = customerData.username;
+					thisLeader.id = leader.playerId;
+					thisLeader.fName = playerData.fName;
+					thisLeader.lName = playerData.lName;
+					thisLeader.city = playerData.city;
+					thisLeader.username = playerData.username;
 					thisLeader.credits = leader.credits;
 					leaderBoardData.push(thisLeader);
 				});
@@ -282,10 +242,10 @@ console.log('offsetMinutes: '+offsetMinutes);
 
 	function tournamentRegister(tournyId) {
 // TODO debug this, including handling errors
-		if(!$scope.customerId) {
+		if(!$scope.playerId) {
 			layoutMgmt.logIn();
 		} else {
-			var registerTournamentPromise = tournamentMgmt.registerTournament(tournyId, $scope.customerId);
+			var registerTournamentPromise = tournamentMgmt.registerTournament(tournyId, $scope.playerId);
 			registerTournamentPromise.then(function(response) {
 console.log('response.data:');
 console.log(response.data);

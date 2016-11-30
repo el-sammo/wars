@@ -12,13 +12,13 @@
 	controller.$inject = [
 		'navMgr', 'pod', '$scope', '$http', '$routeParams', '$modal', 'orderMgmt',
 		'$rootScope', '$q', 'layoutMgmt', 'clientConfig', 'delFeeMgmt',
-		'hoursMgr', 'customerMgmt'
+		'hoursMgr', 'playerMgmt'
 	];
 
 	function controller(
 		navMgr, pod, $scope, $http, $routeParams, $modal, orderMgmt,
 		$rootScope, $q, layoutMgmt, clientConfig, delFeeMgmt,
-		hoursMgr, customerMgmt
+		hoursMgr, playerMgmt
 	) {
 		// TODO
 		// put this in a config? or what?
@@ -93,7 +93,7 @@
 					return orderMgmt.checkoutProhibited();
 				}
 
-				if(! (order && order.customerId)) {
+				if(! (order && order.playerId)) {
 					return layoutMgmt.logIn();
 				}
 
@@ -103,7 +103,7 @@
 		};
 
 		$scope.updateOrder = function() {
-			var sessionPromise = customerMgmt.getSession();
+			var sessionPromise = playerMgmt.getSession();
 		
 			sessionPromise.then(function(sessionData) {
 				if(sessionData.order) {
@@ -118,10 +118,10 @@
 		};
 
 		$scope.updateTotals = function(order) {
-			var customer = {};
-			if(order.customerId) {
-				customerMgmt.getCustomer(order.customerId).then(function(customer) {
-					customer = customer;
+			var player = {};
+			if(order.playerId) {
+				playerMgmt.getPlayer(order.playerId).then(function(player) {
+					player = player;
 
 					var things;
 					if(order.things) {
@@ -173,7 +173,7 @@
 						});
 					}
 		
-					if(customer.taxExempt) {
+					if(player.taxExempt) {
 						order.taxExempt = true;
 					} else {
 						tax = (Math.round((subtotal * taxRate) * 100) / 100);
@@ -187,15 +187,15 @@
 						gratuity = parseFloat(order.gratuity);
 					}
 		
-					var sessionPromise = customerMgmt.getSession();
+					var sessionPromise = playerMgmt.getSession();
 		
 					sessionPromise.then(function(sessionData) {
 						if(sessionData.order && sessionData.order.things) {
 							var deliveryFeeTiers = delFeeMgmt;
 							deliveryFee = deliveryFeeTiers[0];
 					
-							if(sessionData.customerId) {
-								var deliveryFeePromise = $scope.calculateDeliveryFee(sessionData.customerId, things);
+							if(sessionData.playerId) {
+								var deliveryFeePromise = $scope.calculateDeliveryFee(sessionData.playerId, things);
 					
 								deliveryFeePromise.then(function(feeData) {
 									var addRestsFee = 0;
@@ -264,7 +264,7 @@
 						}
 					});
 				}).catch(function(err) {
-					console.log('customer ajax failed');
+					console.log('player ajax failed');
 				});
 			} else {
 				var things;
@@ -317,7 +317,7 @@
 					});
 				}
 	
-				if(customer.taxExempt) {
+				if(player.taxExempt) {
 				} else {
 					tax = (Math.round((subtotal * taxRate) * 100) / 100);
 				}
@@ -330,15 +330,15 @@
 					gratuity = parseFloat(order.gratuity);
 				}
 	
-				var sessionPromise = customerMgmt.getSession();
+				var sessionPromise = playerMgmt.getSession();
 	
 				sessionPromise.then(function(sessionData) {
 					if(sessionData.order && sessionData.order.things) {
 						var deliveryFeeTiers = delFeeMgmt;
 						deliveryFee = deliveryFeeTiers[0];
 				
-						if(sessionData.customerId) {
-							var deliveryFeePromise = $scope.calculateDeliveryFee(sessionData.customerId, things);
+						if(sessionData.playerId) {
+							var deliveryFeePromise = $scope.calculateDeliveryFee(sessionData.playerId, things);
 				
 							deliveryFeePromise.then(function(feeData) {
 								var addRestsFee = 0;
@@ -409,10 +409,10 @@
 			}
 		};
 
-		$scope.calculateDeliveryFee = function(customerId, things) {
+		$scope.calculateDeliveryFee = function(playerId, things) {
 			var deliveryFeeTiers = delFeeMgmt;
 	
-			return customerMgmt.getCustomer(customerId).then(function(customer) {
+			return playerMgmt.getPlayer(playerId).then(function(player) {
 				var driveTimePromise;
 	
 				var promises = [];
@@ -421,7 +421,7 @@
 					if(rests.indexOf(thing.restaurantId) < 0) {
 						rests.push(thing.restaurantId);
 					}
-					promises.push(driveTimePromise = $scope.getDriveTime(thing, customer));
+					promises.push(driveTimePromise = $scope.getDriveTime(thing, player));
 				});
 
 				var addRests = 0;
@@ -440,17 +440,17 @@
 					return {driveTime: mostDriveTime, addRests: addRests}
 				});
 			}).catch(function(err) {
-				console.log('OrderController: calculateDeliveryFee-customer ajax failed');
+				console.log('OrderController: calculateDeliveryFee-player ajax failed');
 				console.error(err);
 				resolve(deliveryFeeTiers[0]);
 			});
 		};
 
-		$scope.getDriveTime = function(thing, customer) {
+		$scope.getDriveTime = function(thing, player) {
 			return $q(function(resolve, reject) {
 				$http.get('/restaurants/' + thing.restaurantId).then(function(res) {
 					var addresses = res.data.addresses;
-					var delivery = customer.addresses.primary;
+					var delivery = player.addresses.primary;
 					var addsLength = addresses.length;
 					var scope = {};
 					scope.durArray = []
