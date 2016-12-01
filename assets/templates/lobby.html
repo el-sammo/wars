@@ -1,31 +1,21 @@
 				<div>
-					<!--  
-
-					https://docs.angularjs.org/api/ng/directive/ngShow
-					https://docs.angularjs.org/api/ng/directive/ngIf
-
-					-->
-
-
-																																
-					
 					<div class="container">
 						<div class="row">
 							<div 
-								class="col-md-2 col-md-offset-2 beccaTab"
+								class="col-md-2 col-md-offset-2"
+								id="headsUpTab"
 							>
 								<span 
-									class="Head's Up"
 									ng-click="showHeadsUp()"
 								>
-									Head's Up
+									Challenges
 								</span>
 							</div>
 							<div 
-								class="col-md-2 beccaTab"
+								class="col-md-2"
+								id="tournamentsTab"
 							>
 								<span 
-									class="Tournaments"
 									ng-click="showTournaments()"
 								>
 									Tournaments
@@ -34,16 +24,138 @@
 						</div>
 						<div class="row">
 							<div 
-								class="col-md-6 col-md-offset-2"
+								class="col-md-10"
 								ng-show="headsUpShow"
 							>
-								Head's Up Called
+								<div class="row">
+									<div class="col-md-12">
+										<div class="row">
+											<div class="col-md-4 tournColHeads">
+												<span class="tournamentHeadings">
+													Tournament Name
+												</span>
+											</div>
+											<div class="col-md-1 tournColHeads">
+												<span class="tournamentHeadings">
+													Entries
+												</span>
+											</div>
+											<div class="col-md-3 tournColHeads">
+												<span class="tournamentHeadings">
+													Entry Fees
+												</span>
+											</div>
+											<div class="col-md-2 tournColHeads">
+												<span class="tournamentHeadings">
+													Status
+												</span>
+											</div>
+											<div class="col-md-2 tournColHeads">
+												<span class="tournamentHeadings">
+													Min. to Start
+												</span>
+											</div>
+										</div>
+										<div 
+											class="row"
+											ng-repeat="tournament in tournamentsData"
+											ng-if="tournament.maxEntries < 3"
+										>
+											<div class="col-md-4">
+												<span class="tournamentData">
+													{{tournament.name}}
+												</span>
+											</div>
+											<div class="col-md-1">
+												<span class="tournamentData">
+													{{tournament.playersCount}} / {{tournament.maxEntries}}
+												</span>
+											</div>
+											<div class="col-md-3">
+												<span class="tournamentData">
+													{{tournament.entryFee | currency}} + {{tournament.houseFee | currency}}
+												</span>
+											</div>
+											<div class="col-md-2">
+												<span class="tournamentData">
+													{{tournament.tournamentStatus}}
+												</span>
+											</div>
+											<div class="col-md-2">
+												<span class="tournamentData">
+													{{tournament.mts}}
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 							<div 
-								class="col-md-6 col-md-offset-2"
+								class="col-md-10"
 								ng-show="tournamentsShow"
 							>
-								Tournaments Called
+								<div class="row">
+									<div class="col-md-12">
+										<div class="row">
+											<div class="col-md-4 tournColHeads">
+												<span class="tournamentHeadings">
+													Tournament Name
+												</span>
+											</div>
+											<div class="col-md-1 tournColHeads">
+												<span class="tournamentHeadings">
+													Entries
+												</span>
+											</div>
+											<div class="col-md-3 tournColHeads">
+												<span class="tournamentHeadings">
+													Entry Fees
+												</span>
+											</div>
+											<div class="col-md-2 tournColHeads">
+												<span class="tournamentHeadings">
+													Status
+												</span>
+											</div>
+											<div class="col-md-2 tournColHeads">
+												<span class="tournamentHeadings">
+													Min. to Start
+												</span>
+											</div>
+										</div>
+										<div 
+											class="row"
+											ng-repeat="tournament in tournamentsData"
+											ng-if="tournament.maxEntries > 2 || tournament.maxEntries === 'UNL'"
+										>
+											<div class="col-md-4">
+												<span class="tournamentData">
+													{{tournament.name}}
+												</span>
+											</div>
+											<div class="col-md-1">
+												<span class="tournamentData">
+													{{tournament.playersCount}} / {{tournament.maxEntries}}
+												</span>
+											</div>
+											<div class="col-md-3">
+												<span class="tournamentData">
+													{{tournament.entryFee | currency}} + {{tournament.houseFee | currency}}
+												</span>
+											</div>
+											<div class="col-md-2">
+												<span class="tournamentData">
+													{{tournament.tournamentStatus}}
+												</span>
+											</div>
+											<div class="col-md-2">
+												<span class="tournamentData">
+													{{tournament.mts}}
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

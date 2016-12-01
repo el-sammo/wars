@@ -49,6 +49,7 @@ function controller(
 	function init() {
 		initDate();
 		initTournaments();
+		setTabsStatus();
 
 		$scope.logIn = layoutMgmt.logIn;
 		$scope.signUp = layoutMgmt.signUp;
@@ -83,7 +84,8 @@ function controller(
 			date = '0' + date;
 		}
 
-		todayDate = year + month + date;
+		todayDate = parseInt(year +''+ month +''+ date);
+
 
 		// debug code
 		// todayDate = 20160727;
@@ -112,15 +114,12 @@ function controller(
 	}
 
 	function onGetTournaments(currentTournamentsData) {
-console.log('currentTournamentsData:');
-console.log(currentTournamentsData);
 		var dateObj = new Date();
 		var nowMills = dateObj.getTime();
 		currentTournamentsData.forEach(function(tournament) {
 			tournament.mtp = parseInt((tournament.startTime - nowMills) / 1000);
 		});
 		$scope.currentTournaments = currentTournamentsData;
-console.log($scope.currentTournaments);
 
 		playerMgmt.getSession().then(function(sessionData) {
 
@@ -150,11 +149,15 @@ console.log($scope.currentTournaments);
 				tournamentData.entryFee = tournament.entryFee;
 				tournamentData.houseFee = tournament.houseFee;
 				tournamentData.playersCount = tournamentPlayersMgmt.getTournamentPlayers(tournament.id).length;
-				tournamentData.maxEntries = tournament.maxEntries;
+				if(tournament.maxEntries == 99999) {
+					tournamentData.maxEntries = 'UNL';
+				} else {
+					tournamentData.maxEntries = tournament.maxEntries;
+				}
 				tournamentData.tournamentStatus = tournament.status;
 				tournaments.push(tournamentData);
 			});
-			console.log(tournaments);
+console.log(tournaments);
 			$scope.tournamentsData = tournaments;
 		});
 	}
@@ -205,14 +208,23 @@ console.log('offsetMinutes: '+offsetMinutes);
 		}
 	}
 
+	function setTabsStatus() {
+		$('#tournamentsTab').addClass('beccaTabOff');
+		$('#headsUpTab').addClass('beccaTabOn');
+	}
+
 	function showHeadsUp() {
 		$scope.tournamentsShow = false;
 		$scope.headsUpShow = true;
+		$('#tournamentsTab').addClass('beccaTabOff');
+		$('#headsUpTab').addClass('beccaTabOn');
 	}
 
 	function showTournaments() {
 		$scope.headsUpShow = false;
 		$scope.tournamentsShow = true;
+		$('#headsUpTab').addClass('beccaTabOff');
+		$('#tournamentsTab').addClass('beccaTabOn');
 	}
 
 	function showTournamentLeaders(tournyId) {

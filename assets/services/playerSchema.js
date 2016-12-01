@@ -31,7 +31,7 @@
 					addressStreet: '',
 					addressCity: '',
 					addressState: '',
-					addressZip: ''
+					addressZip: '',
 					uscf: '',
 					uscfExpiry: '',
 					uscfRating: '',
