@@ -105,11 +105,23 @@ input.error {
   position: relative;
 }  
 
+.beccaTabOff {
+	margin: 4px;
+	border: 1px solid black;
+	border-radius: 10px;
+	font-size: 18px;
+	color: black;
+	font-weight: 700;
+	text-align: center;
+	background-color: #153E4C;
+	cursor: pointer;
+}
+
 .beccaTabOn {
 	margin: 4px;
 	border: 1px solid black;
-	border-radius: 15px;
-	font-size: 24px;
+	border-radius: 10px;
+	font-size: 18px;
 	color: white;
 	font-weight: 700;
 	text-align: center;
@@ -117,15 +129,9 @@ input.error {
 	cursor: pointer;
 }
 
-.beccaTabOff {
-	margin: 4px;
-	border: 1px solid black;
-	border-radius: 15px;
-	font-size: 24px;
-	color: black;
-	font-weight: 700;
-	text-align: center;
-	background-color: #153E4C;
+.tournamentData {
+	font-size: 12px;
+	font-weight: 500;
 	cursor: pointer;
 }
 
@@ -1066,6 +1072,9 @@ td {
 }
 
 .tournamentHeadings {
+	font-size: 14px;
+	font-weight: 600;
+	cursor-pointer;
 }
 
 .tournamentDetails {

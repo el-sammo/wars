@@ -2,17 +2,17 @@
 					<div class="container">
 						<div class="row">
 							<div 
-								class="col-md-2 col-md-offset-2"
-								id="headsUpTab"
+								class="col-md-2 col-md-offset-2 beccaTabOn"
+								id="challengesTab"
 							>
 								<span 
-									ng-click="showHeadsUp()"
+									ng-click="showChallenges()"
 								>
 									Challenges
 								</span>
 							</div>
 							<div 
-								class="col-md-2"
+								class="col-md-2 beccaTabOff"
 								id="tournamentsTab"
 							>
 								<span 
@@ -25,14 +25,19 @@
 						<div class="row">
 							<div 
 								class="col-md-10"
-								ng-show="headsUpShow"
+								ng-show="challengesShow"
 							>
 								<div class="row">
 									<div class="col-md-12">
 										<div class="row">
-											<div class="col-md-4 tournColHeads">
+											<div class="col-md-3 tournColHeads">
 												<span class="tournamentHeadings">
 													Tournament Name
+												</span>
+											</div>
+											<div class="col-md-2 tournColHeads">
+												<span class="tournamentHeadings">
+													Time Control
 												</span>
 											</div>
 											<div class="col-md-1 tournColHeads">
@@ -40,7 +45,7 @@
 													Entries
 												</span>
 											</div>
-											<div class="col-md-3 tournColHeads">
+											<div class="col-md-2 tournColHeads">
 												<span class="tournamentHeadings">
 													Entry Fees
 												</span>
@@ -61,28 +66,51 @@
 											ng-repeat="tournament in tournamentsData"
 											ng-if="tournament.maxEntries < 3"
 										>
-											<div class="col-md-4">
-												<span class="tournamentData">
+											<div class="col-md-3">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.name}}
 												</span>
 											</div>
+											<div class="col-md-2">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
+													{{tournament.timeControl}}
+												</span>
+											</div>
 											<div class="col-md-1">
-												<span class="tournamentData">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.playersCount}} / {{tournament.maxEntries}}
 												</span>
 											</div>
-											<div class="col-md-3">
-												<span class="tournamentData">
+											<div class="col-md-2">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.entryFee | currency}} + {{tournament.houseFee | currency}}
 												</span>
 											</div>
 											<div class="col-md-2">
-												<span class="tournamentData">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.tournamentStatus}}
 												</span>
 											</div>
 											<div class="col-md-2">
-												<span class="tournamentData">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.mts}}
 												</span>
 											</div>
@@ -97,9 +125,14 @@
 								<div class="row">
 									<div class="col-md-12">
 										<div class="row">
-											<div class="col-md-4 tournColHeads">
+											<div class="col-md-3 tournColHeads">
 												<span class="tournamentHeadings">
 													Tournament Name
+												</span>
+											</div>
+											<div class="col-md-2 tournColHeads">
+												<span class="tournamentHeadings">
+													Time Control
 												</span>
 											</div>
 											<div class="col-md-1 tournColHeads">
@@ -107,7 +140,7 @@
 													Entries
 												</span>
 											</div>
-											<div class="col-md-3 tournColHeads">
+											<div class="col-md-2 tournColHeads">
 												<span class="tournamentHeadings">
 													Entry Fees
 												</span>
@@ -128,28 +161,51 @@
 											ng-repeat="tournament in tournamentsData"
 											ng-if="tournament.maxEntries > 2 || tournament.maxEntries === 'UNL'"
 										>
-											<div class="col-md-4">
-												<span class="tournamentData">
+											<div class="col-md-3">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.name}}
 												</span>
 											</div>
+											<div class="col-md-2">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
+													{{tournament.timeControl}}
+												</span>
+											</div>
 											<div class="col-md-1">
-												<span class="tournamentData">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.playersCount}} / {{tournament.maxEntries}}
 												</span>
 											</div>
-											<div class="col-md-3">
-												<span class="tournamentData">
+											<div class="col-md-2">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.entryFee | currency}} + {{tournament.houseFee | currency}}
 												</span>
 											</div>
 											<div class="col-md-2">
-												<span class="tournamentData">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.tournamentStatus}}
 												</span>
 											</div>
 											<div class="col-md-2">
-												<span class="tournamentData">
+												<span 
+													class="tournamentData"
+													ng-click="showTournamentDetails(tournament.id)"
+												>
 													{{tournament.mts}}
 												</span>
 											</div>

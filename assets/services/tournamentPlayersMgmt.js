@@ -17,19 +17,21 @@
 		$http, $q, $sce, configMgr, querystring
 	) {
 		var tournamentPlayers;
+		var getTournamentPlayersByTournamentPromise;
 
 		var service = {
 			getTournamentPlayers: function(tournamentId) {
 				var url = '/tournamentplayers/byTournamentId/' + tournamentId;
-				return $http.get(url).then(function(res) {
+				getTournamentPlayersByTournamentPromise = $http.get(url).then(function(res) {
 					return res.data;
 				}).catch(function(err) {
 					console.log('GET ' + url + ': ajax failed');
 					console.error(err);
 					return $q.reject(err);
 				});
-			}
 
+				return getTournamentPlayersByTournamentPromise;
+			}
 		};
 
 		return service;

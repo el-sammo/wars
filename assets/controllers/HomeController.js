@@ -49,14 +49,14 @@ function controller(
 	function init() {
 		initDate();
 		initTournaments();
-		setTabsStatus();
+		showChallenges();
 
 		$scope.logIn = layoutMgmt.logIn;
 		$scope.signUp = layoutMgmt.signUp;
 		$scope.logOut = layoutMgmt.logOut;
 
 		$scope.account = account;
-		$scope.showHeadsUp = showHeadsUp;
+		$scope.showChallenges = showChallenges;
 		$scope.showTournaments = showTournaments;
 		$scope.showTournamentDetails = showTournamentDetails;
 		$scope.showTournamentLeaders = showTournamentLeaders;
@@ -88,7 +88,7 @@ function controller(
 
 
 		// debug code
-		// todayDate = 20160727;
+		todayDate = 20161201;
 	}
 
 	function initTournaments() {
@@ -115,10 +115,13 @@ function controller(
 
 	function onGetTournaments(currentTournamentsData) {
 		var dateObj = new Date();
-		var nowMills = dateObj.getTime();
-		currentTournamentsData.forEach(function(tournament) {
-			tournament.mtp = parseInt((tournament.startTime - nowMills) / 1000);
-		});
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth();
+		var date = dateObj.getDate();
+		var today = new Date(year, month, date);
+		var todayMills = today.getTime();
+		var nowMills = (((dateObj.getTime() - todayMills) * -1) / 60);
+
 		$scope.currentTournaments = currentTournamentsData;
 
 		playerMgmt.getSession().then(function(sessionData) {
@@ -146,18 +149,21 @@ function controller(
 				var tournamentData = {};
 				tournamentData.id = tournament.id;
 				tournamentData.name = tournament.name;
+				tournamentData.timeControl = tournament.timeControl;
 				tournamentData.entryFee = tournament.entryFee;
 				tournamentData.houseFee = tournament.houseFee;
-				tournamentData.playersCount = tournamentPlayersMgmt.getTournamentPlayers(tournament.id).length;
+				tournamentPlayersMgmt.getTournamentPlayers(tournament.id).then(function(tournamentPlayers) {
+					tournamentData.playersCount = tournamentPlayers.length;
+				});
 				if(tournament.maxEntries == 99999) {
 					tournamentData.maxEntries = 'UNL';
 				} else {
 					tournamentData.maxEntries = tournament.maxEntries;
 				}
 				tournamentData.tournamentStatus = tournament.status;
+				tournamentData.mts = parseInt((tournament.startTime - nowMills) / 1000);
 				tournaments.push(tournamentData);
 			});
-console.log(tournaments);
 			$scope.tournamentsData = tournaments;
 		});
 	}
@@ -193,37 +199,41 @@ console.log(tournaments);
 	}
 
 	function showTournamentDetails(tournyId) {
+console.log('showTournamentDetails() called with: '+tournyId);
 		var dateObj = new Date();
 		var now = dateObj.toString();
 console.log('now: '+now);
 		var offsetMinutes = dateObj.getTimezoneOffset();
 console.log('offsetMinutes: '+offsetMinutes);
-		var getTournamentPromise = tournamentMgmt.getTournament(tournyId);
-		getTournamentPromise.then(function(tournamentData) {
-			$scope.tournamentData = tournamentData;
-
-		});
-		if(!$scope.showLeaders) {
-			$scope.showTournament = true;
-		}
+//		var getTournamentPromise = tournamentMgmt.getTournament(tournyId);
+//		getTournamentPromise.then(function(tournamentData) {
+//			$scope.tournamentData = tournamentData;
+//		});
+//		if(!$scope.showLeaders) {
+//			$scope.showTournament = true;
+//		}
 	}
 
-	function setTabsStatus() {
+	function resetTabsStatus() {
+		$('#challengesTab').removeClass('beccaTabOn');
+		$('#tournamentsTab').removeClass('beccaTabOn');
+		$('#challengesTab').addClass('beccaTabOff');
 		$('#tournamentsTab').addClass('beccaTabOff');
-		$('#headsUpTab').addClass('beccaTabOn');
 	}
 
-	function showHeadsUp() {
+	function showChallenges() {
+		resetTabsStatus();
 		$scope.tournamentsShow = false;
-		$scope.headsUpShow = true;
-		$('#tournamentsTab').addClass('beccaTabOff');
-		$('#headsUpTab').addClass('beccaTabOn');
+		$scope.challengesShow = true;
+		$('#challengesTab').removeClass('beccaTabOff');
+		$('#challengesTab').addClass('beccaTabOn');
 	}
 
 	function showTournaments() {
-		$scope.headsUpShow = false;
+		resetTabsStatus();
+		$scope.challengesShow = false;
 		$scope.tournamentsShow = true;
-		$('#headsUpTab').addClass('beccaTabOff');
+		$('#tournamentsTab').removeClass('beccaTabOff');
 		$('#tournamentsTab').addClass('beccaTabOn');
 	}
 
