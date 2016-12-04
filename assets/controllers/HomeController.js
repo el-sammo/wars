@@ -51,6 +51,9 @@ function controller(
 		initTournaments();
 		showChallenges();
 
+		$scope.tournamentsSortBy = 'name';
+		$scope.tournamentsSortIn = 'asc';
+
 		$scope.logIn = layoutMgmt.logIn;
 		$scope.signUp = layoutMgmt.signUp;
 		$scope.logOut = layoutMgmt.logOut;
@@ -58,6 +61,7 @@ function controller(
 		$scope.account = account;
 		$scope.showChallenges = showChallenges;
 		$scope.showTournaments = showTournaments;
+		$scope.tournamentsSort = tournamentsSort;
 		$scope.showTournamentDetails = showTournamentDetails;
 		$scope.showTournamentLeaders = showTournamentLeaders;
 		$scope.tournamentRegister = tournamentRegister;
@@ -195,6 +199,111 @@ function controller(
 			layoutMgmt.logIn();
 		} else {
 			$location.path('/account');
+		}
+	}
+
+	function tournamentsSort(sortBy) {
+		switch(sortBy){
+			case'name':
+				$scope.tournamentsData.sort(dynamicSort("name"));
+				if($scope.tournamentsSortBy === 'name') {
+					if($scope.tournamentsSortIn === 'asc') {
+						$scope.tournamentsData.reverse();
+						$scope.tournamentsSortIn = 'desc';
+					} else {
+						$scope.tournamentsSortIn = 'asc';
+					}
+				} else {
+					$scope.tournamentsSortBy = 'name';
+					$scope.tournamentsSortIn = 'asc';
+				}
+				break;
+			case'timeControl':
+				$scope.tournamentsData.sort(dynamicSort("timeControl"));
+				if($scope.tournamentsSortBy === 'timeControl') {
+					if($scope.tournamentsSortIn === 'asc') {
+						$scope.tournamentsData.reverse();
+						$scope.tournamentsSortIn = 'desc';
+					} else {
+						$scope.tournamentsSortIn = 'asc';
+					}
+				} else {
+					$scope.tournamentsSortBy = 'timeControl';
+					$scope.tournamentsSortIn = 'asc';
+				}
+				break;
+			case'maxEntries':
+				$scope.tournamentsData.sort(dynamicSort("maxEntries"));
+				if($scope.tournamentsSortBy === 'maxEntries') {
+					if($scope.tournamentsSortIn === 'asc') {
+						$scope.tournamentsData.reverse();
+						$scope.tournamentsSortIn = 'desc';
+					} else {
+						$scope.tournamentsSortIn = 'asc';
+					}
+				} else {
+					$scope.tournamentsSortBy = 'maxEntries';
+					$scope.tournamentsSortIn = 'asc';
+				}
+				break;
+			case'entryFee':
+				$scope.tournamentsData.sort(dynamicSort("entryFee"));
+				if($scope.tournamentsSortBy === 'entryFee') {
+					if($scope.tournamentsSortIn === 'asc') {
+						$scope.tournamentsData.reverse();
+						$scope.tournamentsSortIn = 'desc';
+					} else {
+						$scope.tournamentsSortIn = 'asc';
+					}
+				} else {
+					$scope.tournamentsSortBy = 'entryFee';
+					$scope.tournamentsSortIn = 'asc';
+				}
+				break;
+			case'status':
+				$scope.tournamentsData.sort(dynamicSort("tournamentStatus"));
+				if($scope.tournamentsSortBy === 'tournamentStatus') {
+					if($scope.tournamentsSortIn === 'asc') {
+						$scope.tournamentsData.reverse();
+						$scope.tournamentsSortIn = 'desc';
+					} else {
+						$scope.tournamentsSortIn = 'asc';
+					}
+				} else {
+					$scope.tournamentsSortBy = 'tournamentStatus';
+					$scope.tournamentsSortIn = 'asc';
+				}
+				break;
+			case'startTime':
+				$scope.tournamentsData.sort(dynamicSort("mts"));
+				if($scope.tournamentsSortBy === 'mts') {
+					if($scope.tournamentsSortIn === 'asc') {
+						$scope.tournamentsData.reverse();
+						$scope.tournamentsSortIn = 'desc';
+					} else {
+						$scope.tournamentsSortIn = 'asc';
+					}
+				} else {
+					$scope.tournamentsSortBy = 'mts';
+					$scope.tournamentsSortIn = 'asc';
+				}
+				break;
+			default:
+				$scope.tournamentsData.sort(dynamicSort("name"));
+				$scope.tournamentsSortBy = 'name';
+				$scope.tournamentsSortIn = 'asc';
+		}		
+	}
+
+	function dynamicSort(property) {
+		var sortOrder = 1;
+		if(property[0] === "-") {
+			sortOrder = -1;
+			property = property.substr(1);
+		}
+		return function (a,b) {
+			var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+			return result * sortOrder;
 		}
 	}
 
