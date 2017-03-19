@@ -99,34 +99,127 @@ input.error {
 /** Custom CSS **/
 
 .board {
-	border: 1px solid black;
 }
 
 .whiteSquare {
-	background-color: #FFF;
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
-	width: 56px;
-	height: 56px;
+	background-color: #F0d9b5;
+	width: 60px;
+	height: 60px;
+	z-index: 2;
 }
 
 .blackSquare {
-	background-color: #000;
-	border-right: 1px solid black;
-	border-bottom: 1px solid black;
-	width: 56px;
-	height: 56px;
+	background-color: #B48863;
+	width: 60px;
+	height: 60px;
+	z-index: 2;
+}
+
+#bar {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bbn {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bcb {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bdq {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bek {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bfb {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bgn {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bhr {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bap {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bbp {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bcp {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bdp {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bep {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bfp {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bgp {
+	left: -14px;
+	z-index: 99;
+	position: relative;
+}
+
+#bhp {
+	left: -14px;
+	z-index: 99;
+	position: relative;
 }
 
 .rank {
-	width: 56px;
-	height: 56px;
+	width: 60px;
+	height: 60px;
 	border-right: 1px solid black;
 }
 
 .file {
-	width: 56px;
-	height: 56px;
+	width: 60px;
+	height: 60px;
 }
 
 .rankId {
