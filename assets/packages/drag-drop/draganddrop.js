@@ -93,6 +93,8 @@ console.log('uiDraggable() called');
             }
 
             function setDragElement(e, dragImageElementId) {
+console.log('setDragElement() called');
+console.log('dragImageElementId: '+dragImageElementId);
                 var dragImageElementFn;
 
                 if(e.originalEvent) {
@@ -140,6 +142,12 @@ console.log('uiDraggable() called');
 
                     //Code to make sure that the setDragImage is available. IE 10, 11, and Opera do not support setDragImage.
                     var hasNativeDraggable = !(document.uniqueID || window.opera);
+
+										//Establish which piece type is moving
+										var tSrcSlashPcs = e.target.src.split("/");
+										var tSrcDotPcs = tSrcSlashPcs[tSrcSlashPcs.length - 1].split(".");
+										var movingPc = tSrcDotPcs[0];
+console.log('movingPc: '+movingPc);
 
                     //If there is a draggable image passed in, then set the image to be dragged.
                     if (dragImage && hasNativeDraggable) {
