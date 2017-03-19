@@ -98,6 +98,49 @@ input.error {
 
 /** Custom CSS **/
 
+.board {
+	border: 1px solid black;
+}
+
+.whiteSquare {
+	background-color: #FFF;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	width: 56px;
+	height: 56px;
+}
+
+.blackSquare {
+	background-color: #000;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	width: 56px;
+	height: 56px;
+}
+
+.rank {
+	width: 56px;
+	height: 56px;
+	border-right: 1px solid black;
+}
+
+.file {
+	width: 56px;
+	height: 56px;
+}
+
+.rankId {
+	top: 18px;
+	left: 22px;
+	position: relative;
+}
+
+.fileId {
+	top: 6px;
+	left: 10px;
+	position: relative;
+}
+
 .beccaWhite {
 	color: white;
   padding: 20px;

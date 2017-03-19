@@ -80,6 +80,16 @@
 
 
 		///
+		// Game
+		///
+
+		$routeProvider.when('/game/:id', {
+			controller: 'GameController',
+			templateUrl: '/templates/game.html'
+		});
+
+
+		///
 		// Import
 		///
 

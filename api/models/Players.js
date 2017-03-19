@@ -59,6 +59,10 @@ module.exports = {
       type: 'integer',
       required: false
 		},
+    uscfState: {
+      type: 'string',
+      required: false
+		},
     uscfRating: {
       type: 'integer',
       required: false
